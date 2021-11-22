@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <ul id="messages"></ul>
+    </div>
+    <input type="text" id="message" placeholder="message">
+    <input type="text" id="name" placeholder="UserName">
+
+    <button onclick="submitMessage()"> SUbmit </button>
+    <p id="myPar">
+    </p>
+
+</body>
+<script src="https://cdn.socket.io/4.2.0/socket.io.min.js"
+    integrity="sha384-PiBR5S00EtOj2Lto9Uu81cmoyZqR57XcOna1oAuVuIEjzj0wpqDVfD0JA9eXlRsj"
+    crossorigin="anonymous"></script>
+<script>
+
+
+    const message = document.getElementById("message");
+    const name = document.getElementById("name");
+
+    var parElement = document.getElementById("myPar");
+    var textToAdd = document.createTextNode("Text to be added");
+    parElement.appendChild(textToAdd);
+
+
+    function renderMessageToDom(message) {
+        var tag = document.createElement("p"); 
+        var text = document.createTextNode(message);
+        tag.appendChild(text); 
+        var element = document.getElementsByTagName("body")[0];
+        element.appendChild(tag);
+    }
+
+
+
+    const socket = io('http://localhost:3005');
+    socket.on('connect', function () {
+        console.log('Connected');
+    });
+
+    socket.on('disconnect', function () {
+        console.log('Disconnected');
+    });
+
+    function submitMessage() {
+        socket.emit('message', {
+            username: name.value,
+            designation: "Urban Planner, Staff",
+            message: message.value,
+            sentAt: Date.now()
+        })
+        renderMessageToDom(message.value)
+    }
+</script>
+
+</html>
